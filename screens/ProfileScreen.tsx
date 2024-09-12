@@ -1,9 +1,33 @@
 import React, { useContext } from 'react';
 import { View, Text, Button } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthContext } from '../App';
 
-export default function ProfileScreen({ navigation }) {
-  const { user, setUser } = useContext(AuthContext);
+// Define the navigation types for React Navigation
+type RootStackParamList = {
+  Home: undefined;
+  Login: undefined;
+};
+
+type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+
+interface Props {
+  navigation: ProfileScreenNavigationProp;
+}
+
+export default function ProfileScreen({ navigation }: Props) {
+  const authContext = useContext(AuthContext);
+
+  // Add a null check for AuthContext
+  if (!authContext) {
+    return (
+      <View>
+        <Text>Context not available!</Text>
+      </View>
+    );
+  }
+
+  const { user, setUser } = authContext;
 
   const logout = () => {
     // Clear user authentication state
@@ -24,7 +48,7 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <View>
-      <Text>Welcome, {user.username}!</Text> {/* Display user's name or email */}
+      <Text>Welcome, {user.username}!</Text> {/* Display user's name or username */}
       <Text>Email: {user.email}</Text> {/* Display user's email */}
 
       {/* Add other profile information or settings here */}

@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { WebSocket } from 'react-native-websocket'; // or use your websocket library of choice
+
+interface QnAItem {
+  id: number;
+  question: string;
+  answer: string;
+}
 
 export default function QnAScreen() {
-  const [qnaData, setQnaData] = useState([]);
+  const [qnaData, setQnaData] = useState<QnAItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,9 +19,13 @@ export default function QnAScreen() {
     };
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setQnaData(data);
-      setLoading(false);
+      try {
+        const data = JSON.parse(event.data);
+        setQnaData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
     };
 
     ws.onerror = (error) => {

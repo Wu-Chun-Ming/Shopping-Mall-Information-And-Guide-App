@@ -1,26 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { fetchShops } from '../server/db';  // Fetch shops from SQLite database
 
+// Define the structure of the shop object
+interface Shop {
+  id: number;
+  name: string;
+  floor: string;
+  type: string;
+}
+
+// Define the navigation types
+type RootStackParamList = {
+  ShopDetail: { shopId: number };
+};
+
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ShopDetail'>;
+
 export default function HomeScreen() {
-  const [shops, setShops] = useState([]);
+  const [shops, setShops] = useState<Shop[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredShops, setFilteredShops] = useState([]);
-  const navigation = useNavigation();
+  const [filteredShops, setFilteredShops] = useState<Shop[]>([]);
+  const navigation = useNavigation<HomeScreenNavigationProp>();
 
   useEffect(() => {
     loadShops();
   }, []);
 
   const loadShops = async () => {
-    const shopList = await fetchShops();
+    const shopList: Shop[] = await fetchShops(); // Assuming fetchShops returns Shop[]
     setShops(shopList);
     setFilteredShops(shopList);
   };
 
   // Function to filter shops based on the search query
-  const handleSearch = (query) => {
+  const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query) {
       const filtered = shops.filter(shop =>

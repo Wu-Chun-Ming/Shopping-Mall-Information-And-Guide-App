@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
 import { fetchShops } from '../server/db';  // Import the fetchShops function from db.js
 
+interface Shop {
+  id: String;
+  name: String;
+  floor: String;
+  type: String;
+  picture: String;
+}
+
 export default function ShopScreen() {
-  const [shops, setShops] = useState([]);
+  const [shops, setShops] = useState<Shop[]>([]);
 
   useEffect(() => {
     loadShops();
