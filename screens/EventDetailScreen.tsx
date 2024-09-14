@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { fetchEventById, getDBConnection } from '../database/db-service';
-import { getEventImageSource } from './images';
+import { getEventImageSource } from '../images';
 
 const EventDetailScreen = ({ route, navigation }: any) => {
 
@@ -11,7 +11,6 @@ const EventDetailScreen = ({ route, navigation }: any) => {
 
   // Load event detail from database by event id
   const loadEventDetail = async () => {
-    // const event = await fetchEventById(eventId);
     const event = await fetchEventById(await getDBConnection(), eventId);
     setEvent(event);
   };
@@ -30,25 +29,7 @@ const EventDetailScreen = ({ route, navigation }: any) => {
   }
 
   return (
-    <ScrollView style={{
-      flex: 1, padding: 10,
-      // padding: 20, justifyContent: 'center', alignItems: 'center'
-    }}>
-      {/* {!event &&
-        <View>
-          <Text style={{ fontSize: 25, color: 'red' }}>Couldn't connect to the server.</Text>
-          <View>
-            <Button title='reload' onPress={() => {
-              //   socketLab.emit('client_send');
-              loadEventDetail();
-              // if (events.length === 0) {
-              if (!event) {
-                Alert.alert('Please try again later.')
-              }
-            }}
-            />
-          </View>
-        </View>} */}
+    <ScrollView style={{ flex: 1, padding: 10, }}>
       <Text>
         <Text style={styles.label}>Event Name: </Text>
         {event.name.toUpperCase()}
@@ -73,9 +54,6 @@ const EventDetailScreen = ({ route, navigation }: any) => {
           resizeMode: 'contain',
         }}
       />
-
-      {/* Button to view map or navigate to location */}
-      {/* <Button title="View Map" onPress={() => navigation.navigate('Map', { location: event.location })} /> */}
     </ScrollView>
   );
 }

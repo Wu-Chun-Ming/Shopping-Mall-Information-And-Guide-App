@@ -1,59 +1,84 @@
-import React, { useContext } from 'react';
-import { View, Text, Button } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthContext } from '../App';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Alert } from 'react-native';
+import { AppInput, NavigationButton } from '../UI';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { deleteUser, updateUserPassword } from '../database/db-service';
 
-// Define the navigation types for React Navigation
-type RootStackParamList = {
-  Home: undefined;
-  Login: undefined;
-};
+const ProfileScreen = ({ route, navigation }: any) => {
+  const [user, setUser] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
-
-interface Props {
-  navigation: ProfileScreenNavigationProp;
-}
-
-export default function ProfileScreen({ navigation }: Props) {
-  const authContext = useContext(AuthContext);
-
-  // Add a null check for AuthContext
-  if (!authContext) {
-    return (
-      <View>
-        <Text>Context not available!</Text>
-      </View>
-    );
+  // Auto login
+  const autoLogin = async () => {
+    try {
+      let username = await AsyncStorage.getItem('username');
+      if (username !== null) {
+        console.log('setting username');
+      }
+    } catch (error) {
+      console.log('## ERROR READING ITEM ##: ', error);
+    }
+  }
+  // Update Password
+  const _updatePassword = async () => {
+    await updateUserPassword(user, newPassword);
+    setNewPassword('');
+    Alert.alert('Your password has been updated');
   }
 
-  const { user, setUser } = authContext;
-
-  const logout = () => {
-    // Clear user authentication state
-    setUser(null);
-    // Navigate back to the Home or Login page
-    navigation.navigate('Home');
+  // Logout
+  const _logout = async () => {
+    try {
+      await AsyncStorage.setItem('username', '');
+      setUser('');
+      Alert.alert('You are now logged out');
+      navigation.navigate('Home');  // Navigate back to the Home page
+    } catch (error) {
+      console.log('## ERROR SAVING ITEM ##: ', error);
+    }
   };
 
-  if (!user) {
-    // If the user is not logged in, show a message and a button to go to the login page
-    return (
-      <View>
-        <Text>You are not logged in!</Text>
-        <Button title="Go to Login" onPress={() => navigation.navigate('Login')} />
-      </View>
-    );
+  // Delete Account
+  const _deleteAccount = async () => {
+    await deleteUser(user);
+    await AsyncStorage.setItem('username', '');
+    setUser('');
+    Alert.alert('Your account has been deleted');
   }
 
-  return (
-    <View>
-      <Text>Welcome, {user.username}!</Text> {/* Display user's name or username */}
-      <Text>Email: {user.email}</Text> {/* Display user's email */}
+  useEffect(() => {
+    autoLogin();
+  }, [])
 
-      {/* Add other profile information or settings here */}
-      
-      <Button title="Logout" onPress={logout} />
-    </View>
-  );
+  // If the user is not logged in, show a message and a button to go to the login page
+  if (!user) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', padding: 10, }}>
+        <View style={{ alignItems: 'center', }}>
+          <Text style={{ fontSize: 30 }}>You are not logged in!</Text>
+        </View>
+        <NavigationButton title='Go to Login' onPress={() => navigation.navigate('Login')} />
+      </View>);
+  } else {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', padding: 10, }}>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ fontSize: 30, }}>Welcome, {user}!</Text>
+        </View>
+
+        <AppInput
+          label='New Password'
+          placeholder='New Password'
+          orientation='horizontal'
+          value={newPassword}
+          onChangeText={(input: string) => setNewPassword(input)}
+          secureTextEntry
+        />
+        <NavigationButton title="Update Password" onPress={_updatePassword} style={{ marginBottom: 10, }} />
+        <NavigationButton title="Logout" onPress={_logout} style={{ marginBottom: 10, }} />
+        <NavigationButton title="Delete Account" onPress={_deleteAccount} style={{ backgroundColor: '#b01515' }} />
+      </View>);
+  }
 }
+
+export default ProfileScreen;

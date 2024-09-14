@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, Image, StyleSheet, TouchableNativeFeedback } from 'react-native';
 import { getDBConnection, fetchShops, fetchEvents } from '../database/db-service';  // Fetch shops from SQLite database
-import { getEventImageSource, getShopImageSource } from './images';
+import { getEventImageSource, getShopImageSource } from '../images';
 import { useFocusEffect } from '@react-navigation/native';
 
 const HomeScreen = ({ route, navigation }: any) => {
@@ -30,9 +30,6 @@ const HomeScreen = ({ route, navigation }: any) => {
       );
       setFilteredShops(filtered);
     }
-    // else {
-    //   setFilteredShops(shops);
-    // }
   };
 
   useEffect(() => {
@@ -181,20 +178,15 @@ const styles = StyleSheet.create({
   itemContainer: {
     margin: 5,
     justifyContent: 'flex-end',
-    // borderRadius: 5,
     padding: 10,
     marginBottom: 10,
     marginTop: 10,
-    // paddingBottom: 10,
     height: 150,
     alignItems: 'center',
   },
   itemName: {
     fontSize: 16,
-    // color: '#fff',
     fontWeight: 'bold',
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   itemCode: {
     fontWeight: '600',
@@ -205,11 +197,9 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '600',
-    // alignItems: 'center',
     backgroundColor: '#636e72',
     color: 'white',
     padding: 10,
-    // margin: 20,
   },
 });
 

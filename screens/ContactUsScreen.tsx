@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Button, Alert, TouchableNativeFeedback } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import { AppButton, InputWithLabel, NavigationButton } from '../UI';
-// import App from './SetttingsScreen';
+import { NavigationButton } from '../UI';
 import { useFocusEffect } from '@react-navigation/native';
 import { getDBConnection, insertEnquiry } from '../database/db-service';
 
@@ -61,7 +60,7 @@ const ContactUsScreen = ({ route, navigation }: any) => {
             navigation.navigate('Home');
         } else {
             Alert.alert(
-                'Form Errors', // Title for the Alert
+                'Form Errors',
                 `${errors.name ? errors.name + '\n' : ''}` +
                 `${errors.email ? errors.email + '\n' : ''}` +
                 `${errors.enquiry ? errors.enquiry + '\n' : ''}`
@@ -80,7 +79,7 @@ const ContactUsScreen = ({ route, navigation }: any) => {
     )
 
     return (
-        <View style={styles.container}>
+        <View style={{padding: 10,}}>
             {/* Name Field */}
             <Text style={styles.label}>Name: </Text>
             <TextInput
@@ -116,68 +115,20 @@ const ContactUsScreen = ({ route, navigation }: any) => {
                     setEnquiry(input);
                 }}
             />
-
-            {/* Submit Button */}
-            {/* <TouchableNativeFeedback
-                // style={{}}
-                onPress={() => {
-                    if (validateForm(name, email, enquiry)) {
-                        sendEnquiry(name, email, enquiry);
-                        Alert.alert('Thank you for contacting us.\n We will get back to you soon.');
-                        navigation.navigate('Home');
-                    } else {
-                        Alert.alert(
-                            'Form Errors', // Title for the Alert
-                            `${errors.name ? errors.name + '\n' : ''}` +
-                            `${errors.email ? errors.email + '\n' : ''}` +
-                            `${errors.enquiry ? errors.enquiry + '\n' : ''}`
-                        );
-                    }
-                }}>
-                <View style={[buttonStyles.button]}>
-                    <Text style={buttonStyles.buttonText}>Submit</Text>
-                </View>
-            </TouchableNativeFeedback> */}
-            <NavigationButton title='Submit' onPress={_submit}/>
+            <NavigationButton title='Submit' onPress={_submit} />
         </View>
     );
 };
 
-const buttonStyles = StyleSheet.create({
-    button: {
-        // margin: 5,
-        alignItems: 'center',
-        borderRadius: 20,
-        backgroundColor: '#286090',
-    },
-    buttonText: {
-        padding: 15,
-        fontSize: 20,
-        color: 'white',
-    },
-});
-
 const styles = StyleSheet.create({
-    container: {
-        // flex: 1,
-        // justifyContent: 'center',
-        // alignItems: 'center',
-        // backgroundColor: '#2c3e50',
-        // borderBlockColor: 'red',
-        // borderRadius: 10,
-        // flexDirection: 'row',
-        padding: 10,
-    },
     label: {
-        fontSize: 30,
+        fontSize: 25,
         fontWeight: 'bold',
     },
     input: {
-        // flex: 1,
         color: 'black',
         fontSize: 24,
         margin: 5,
-        // textAlign: 'right',
         borderColor: 'black',
         borderWidth: 1,
         borderRadius: 10,
@@ -185,7 +136,6 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
         maxHeight: 150,
         textAlign: 'justify',
-        // width: Dimensions.get('window').width,
     },
 });
 

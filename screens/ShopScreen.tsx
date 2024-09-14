@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { fetchShops, getDBConnection } from '../database/db-service';
-import { getShopImageSource } from './images';
+import { getShopImageSource } from '../images';
 import { FlatGrid } from 'react-native-super-grid';
 
 const ShopScreen = ({ route, navigation }: any) => {
