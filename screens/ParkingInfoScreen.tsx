@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text } from 'react-native';
 
-export default function ParkingInfoScreen() {
+const ParkingInfoScreen = () => {
   return (
-    <ScrollView style={{ flex: 1, padding: 10 }}>
+    <View style={{ flex: 1, padding: 10 }}>
       <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Parking Information</Text>
       <Text style={{ marginTop: 10 }}>
         Parking is available in the basement levels B1 to B3. 
@@ -22,6 +22,8 @@ export default function ParkingInfoScreen() {
         We also offer valet parking services from 9 AM to 10 PM daily. 
         Valet parking is located at the main entrance.
       </Text>
-    </ScrollView>
+    </View>
   );
 }
+
+export default ParkingInfoScreen;
