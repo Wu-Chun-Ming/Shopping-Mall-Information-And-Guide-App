@@ -30,13 +30,8 @@ const EventDetailScreen = ({ route, navigation }: any) => {
 
   return (
     <ScrollView style={{ flex: 1, padding: 10, }}>
-      <Text>
-        <Text style={styles.label}>Event Name: </Text>
-        {event.name.toUpperCase()}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Date: </Text>
-        {event.date}
+      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>
+        <Text>{event.name.toUpperCase()}</Text>
       </Text>
       <Text>
         <Text style={styles.label}>Location: </Text>

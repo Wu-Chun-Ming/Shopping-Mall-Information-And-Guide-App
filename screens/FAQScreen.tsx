@@ -16,7 +16,7 @@ const FAQScreen = () => {
   }, []);
 
   return (
-    <View style={{ flex: 1, padding: 10 }}>
+    <View style={{ flex: 1, padding: 15 }}>
       {(faqData.length === 0)
         ? <View style={{ flex: 1, justifyContent: 'center' }}>
           <ActivityIndicator size={80} color="#0000ff" />
@@ -26,8 +26,8 @@ const FAQScreen = () => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={{ marginBottom: 10 }}>
-              <Text style={{ fontWeight: 'bold' }}>{item.question}</Text>
-              <Text>{item.answer}</Text>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'justify' }}>Q: {item.question}</Text>
+              <Text style={{fontSize: 15, textAlign: 'justify'}}>A: {item.answer}</Text>
             </View>
           )}
         />}

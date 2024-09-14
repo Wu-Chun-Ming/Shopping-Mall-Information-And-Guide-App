@@ -31,18 +31,7 @@ const EventScreen = ({ route, navigation }: any) => {
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <View>
-            <Text style={{ fontSize: 30, fontWeight: 'bold', }}>{item.name}</Text>
-            {/* Date */}
-            <Text>
-              <Text style={{ fontWeight: 'bold' }}>Date: </Text>
-              {item.date}
-            </Text>
-            {/* Time */}
-            <Text>
-              <Text style={{ fontWeight: 'bold' }}>Time: </Text>
-              {item.start_time} -
-              {item.end_time}
-            </Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', }}>{item.name.toUpperCase()}</Text>
             {/* Location */}
             <Text>
               <Text style={{ fontWeight: 'bold' }}>Location: </Text>
