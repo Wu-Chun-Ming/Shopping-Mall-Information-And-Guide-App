@@ -24,7 +24,6 @@ def index():
     cursor = db.cursor()
     cursor.execute('SELECT * FROM users ORDER BY name')
     rows = cursor.fetchall()
-    # print(rows)
     db.close()
 
     rows_as_dict = []
@@ -89,9 +88,6 @@ def update(username):
     if 'username' not in request.json:
         abort(400)
 
-    # if int(request.json['id']) != place:
-    #     abort(400)
-
     update_user = (
         request.json['new_password'],
         request.json['username'],
@@ -122,13 +118,8 @@ def delete(username):
     if not request.json:
         abort(400)
 
-    # if 'id' not in request.json:
-    #     abort(400)
     if 'username' not in request.json:
         abort(400)
-
-    # if int(request.json['id']) != place:
-    #     abort(400)
 
     db = sqlite3.connect(DB)
     cursor = db.cursor()

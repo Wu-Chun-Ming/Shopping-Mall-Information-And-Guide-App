@@ -28,9 +28,7 @@ export const fetchShops = async (db: SQLiteDatabase) => {
     const shopList: any = [];
     const query = `SELECT * FROM shops`;
     const results = await db.executeSql(query);
-    //   const results = await db.transaction(tx => {
-    //     tx.executeSql(query);
-    // });
+
     results.forEach((result: any) => {
       (result.rows.raw()).forEach((item: any) => {
         shopList.push(item);
@@ -38,7 +36,7 @@ export const fetchShops = async (db: SQLiteDatabase) => {
     });
     return shopList;
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching shops:', error);
     throw Error('Failed to fetch shops');
   }
 };
@@ -51,8 +49,8 @@ export const fetchShopById = async (db: SQLiteDatabase, shopId: any) => {
 
     return results[0].rows.item(0)
   } catch (error) {
-    console.error(error);
-    throw Error('Failed to get shop detail');
+    console.error('Error fetching shop detail:', error);
+    throw Error('Failed to fetch shop detail');
   }
 }
 
@@ -65,6 +63,7 @@ export const fetchEvents = async (db: SQLiteDatabase) => {
     const eventList: any = [];
     const query = `SELECT * FROM events`;
     const results = await db.executeSql(query);
+
     results.forEach((result: any) => {
       (result.rows.raw()).forEach((item: any) => {
         eventList.push(item);
@@ -85,7 +84,7 @@ export const fetchEventById = async (db: SQLiteDatabase, eventId: string) => {
     return results[0].rows.item(0)
   } catch (error) {
     console.error('Error fetching event detail:', error);
-    throw Error('Failed to get event detail');
+    throw Error('Failed to fetch event detail');
   }
 }
 
@@ -100,7 +99,7 @@ export const insertEnquiry = async (
   enquiry: string
 ) => {
   try {
-    const query = 'INSERT INTO enquiries(name, email, enquiry) VALUES(?,?,?)';
+    const query = 'INSERT INTO enquiries(user_name, user_email, enquiry) VALUES(?,?,?)';
     const parameters = [name, email, enquiry];
     await db.executeSql(query, parameters);
   } catch (error) {
@@ -118,6 +117,7 @@ export const fetchFAQ = async (db: SQLiteDatabase) => {
     const faqList: any = [];
     const query = `SELECT * FROM faq`;
     const results = await db.executeSql(query);
+    
     results.forEach((result: any) => {
       (result.rows.raw()).forEach((item: any) => {
         faqList.push(item);
@@ -130,14 +130,10 @@ export const fetchFAQ = async (db: SQLiteDatabase) => {
   }
 }
 
-
-
-// For user authentication
-const serverPath = 'http://10.0.2.2:5000';
 /* 
   Users
 */
-
+const serverPath = 'http://10.0.2.2:5000';
 // Get users
 export const getUsers = async () => {
 
@@ -212,7 +208,7 @@ export const deleteUser = async (username: string) => {
   const url = serverPath + '/api/user/' + username;
 
   console.log(username);
-  
+
   await fetch(url, {
     method: 'DELETE',
     headers: {

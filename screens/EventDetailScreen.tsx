@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Image, Dimensions, ActivityIndicato
 import { fetchEventById, getDBConnection } from '../database/db-service';
 import { getEventImageSource } from '../images';
 
-const EventDetailScreen = ({ route, navigation }: any) => {
+const EventDetailScreen = ({ route }: any) => {
 
   const { width, height } = Dimensions.get('window');
   const { eventId } = route.params;

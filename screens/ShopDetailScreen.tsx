@@ -3,7 +3,7 @@ import { View, Text, Image, Dimensions, ScrollView, StyleSheet, ActivityIndicato
 import { fetchShopById, getDBConnection } from '../database/db-service';
 import { getShopImageSource } from '../images';
 
-const ShopDetailScreen = ({ route, navigation }: any) => {
+const ShopDetailScreen = ({ route }: any) => {
 
   const { width, height } = Dimensions.get('window');
   const { shopId } = route.params;  // Get the shop ID from route params
@@ -20,16 +20,11 @@ const ShopDetailScreen = ({ route, navigation }: any) => {
   }, []);
   
   // If shop detail is not loaded
-  if (!shop) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center' }}>
+  (!shop) 
+  ? (<View style={{ flex: 1, justifyContent: 'center' }}>
         <ActivityIndicator size={80} color="#0000ff" />
-      </View>
-    );
-  }
-
-  return (
-    <ScrollView style={{ flex: 1, padding: 10 }}>
+      </View>)
+  : (<ScrollView style={{ flex: 1, padding: 10 }}>
       <Text style={{ fontSize: 30, fontWeight: 'bold' }}>
         <Text>{shop.name.toUpperCase()}</Text>
       </Text>
@@ -59,8 +54,7 @@ const ShopDetailScreen = ({ route, navigation }: any) => {
           }}
         />
       </View>
-    </ScrollView>
-  );
+    </ScrollView>)
 }
 
 const styles = StyleSheet.create({

@@ -4,7 +4,7 @@ import { getDBConnection, fetchShops, fetchEvents } from '../database/db-service
 import { getEventImageSource, getShopImageSource } from '../images';
 import { useFocusEffect } from '@react-navigation/native';
 
-const HomeScreen = ({ route, navigation }: any) => {
+const HomeScreen = ({ navigation }: any) => {
   const [shops, setShops] = useState([]);
   const [events, setEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -81,14 +81,8 @@ const HomeScreen = ({ route, navigation }: any) => {
       {/* Shops & Events */}
       {(searchQuery === '') &&
         <View>
-          <Text style={{
-            fontSize: 20,
-            fontWeight: '600',
-            backgroundColor: '#786e6d',
-            color: 'white',
-            padding: 10,
-            borderRadius: 10,
-          }}>Shops</Text>
+          {/* Shops List */}
+          <Text style={styles.sectionHeader}>Shops</Text>
           <FlatList
             data={shops}
             horizontal={true}
@@ -103,41 +97,19 @@ const HomeScreen = ({ route, navigation }: any) => {
                 style={{ justifyContent: 'center', alignItems: 'center' }}
               >
                 <View>
-                  <Image
-                    source={getShopImageSource(item.type, item.name)}
-                    style={{
-                      width: 150,
-                      height: 150,
-                      borderRadius: 20,
-                      margin: 10,
-                    }}
-                  />
-                  <Text style={{
-                    flexWrap: 'wrap',
-                    width: 150,
-                    height: 40,
-                    textAlign: 'center',
-                    fontSize: 15,
-                    fontWeight: 'bold',
-                  }}
-                  >{item.name.toUpperCase()}</Text>
+                  <Image source={getShopImageSource(item.type, item.name)} style={styles.image} />
+                  <Text style={styles.label}>{item.name.toUpperCase()}</Text>
                 </View>
               </TouchableNativeFeedback>
             )}
           />
 
           {/* Events List */}
-          <Text style={{
-            fontSize: 20,
-            fontWeight: '600',
-            backgroundColor: '#786e6d',
-            color: 'white',
-            padding: 10,
-            borderRadius: 10,
-          }}>Events</Text>
+          <Text style={styles.sectionHeader}>Events</Text>
           <FlatList
             data={events}
             horizontal={true}
+            showsHorizontalScrollIndicator={false}
             keyExtractor={(item: any) =>
               item.id.toString()
             }
@@ -147,24 +119,8 @@ const HomeScreen = ({ route, navigation }: any) => {
                 style={{ justifyContent: 'center', alignItems: 'center' }}
               >
                 <View>
-                  <Image
-                    source={getEventImageSource(item.id)}
-                    style={{
-                      width: 150,
-                      height: 150,
-                      borderRadius: 20,
-                      margin: 10,
-                    }}
-                  />
-                  <Text style={{
-                    flexWrap: 'wrap',
-                    width: 150,
-                    height: 40,
-                    textAlign: 'center',
-                    fontSize: 15,
-                    fontWeight: 'bold',
-                  }}
-                  >{item.name.toUpperCase()}</Text>
+                  <Image source={getEventImageSource(item.id)} style={styles.image} />
+                  <Text style={styles.label}>{item.name.toUpperCase()}</Text>
                 </View>
               </TouchableNativeFeedback>
             )}
@@ -175,31 +131,27 @@ const HomeScreen = ({ route, navigation }: any) => {
 }
 
 const styles = StyleSheet.create({
-  itemContainer: {
-    margin: 5,
-    justifyContent: 'flex-end',
-    padding: 10,
-    marginBottom: 10,
-    marginTop: 10,
-    height: 150,
-    alignItems: 'center',
-  },
-  itemName: {
-    fontSize: 16,
+  label: {
+    flexWrap: 'wrap',
+    width: 150,
+    height: 40,
+    textAlign: 'center',
+    fontSize: 15,
     fontWeight: 'bold',
   },
-  itemCode: {
-    fontWeight: '600',
-    fontSize: 12,
-    color: '#fff',
+  image: {
+    width: 150,
+    height: 150,
+    borderRadius: 20,
+    margin: 10,
   },
   sectionHeader: {
-    flex: 1,
-    fontSize: 15,
+    fontSize: 20,
     fontWeight: '600',
-    backgroundColor: '#636e72',
+    backgroundColor: '#786e6d',
     color: 'white',
     padding: 10,
+    borderRadius: 10,
   },
 });
 

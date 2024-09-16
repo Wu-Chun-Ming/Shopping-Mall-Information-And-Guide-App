@@ -5,7 +5,7 @@ import { NavigationButton } from '../UI';
 import { useFocusEffect } from '@react-navigation/native';
 import { getDBConnection, insertEnquiry } from '../database/db-service';
 
-const ContactUsScreen = ({ route, navigation }: any) => {
+const ContactUsScreen = ({ navigation }: any) => {
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -79,7 +79,7 @@ const ContactUsScreen = ({ route, navigation }: any) => {
     )
 
     return (
-        <View style={{padding: 10,}}>
+        <View style={{ padding: 10, }}>
             {/* Name Field */}
             <Text style={styles.label}>Name: </Text>
             <TextInput

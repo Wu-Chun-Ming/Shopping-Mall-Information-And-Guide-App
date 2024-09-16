@@ -52,7 +52,7 @@ const RegisterScreen = ({ navigation }: any) => {
       await createUser(username, password);
       try {
         await AsyncStorage.setItem('username', username);
-        Alert.alert('You are now logged in');
+        Alert.alert('You are now logged in.');
         navigation.navigate('Profile');
       } catch (error) {
         console.log('## ERROR SAVING ITEM ##: ', error);

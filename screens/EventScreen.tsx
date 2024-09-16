@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Image, Dimensions } from 'react
 import { fetchEvents, getDBConnection } from '../database/db-service';
 import { getEventImageSource } from '../images';
 
-const EventScreen = ({ route, navigation }: any) => {
+const EventScreen = ({ navigation }: any) => {
 
   const [events, setEvents] = useState([]);
 

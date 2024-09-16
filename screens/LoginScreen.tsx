@@ -41,7 +41,7 @@ const LoginScreen = ({ navigation }: any) => {
       if (user) {
         try {
           await AsyncStorage.setItem('username', user.username);
-          Alert.alert('You are now logged in');
+          Alert.alert('You are now logged in.');
           navigation.navigate('Profile');
         } catch (error) {
           console.log('## ERROR SAVING ITEM ##: ', error);

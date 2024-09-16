@@ -19,7 +19,7 @@ const navigatePages = [
     { name: 'About Us', page: 'AboutUsStack' }
 ];
 
-const SettingsScreen = ({ route, navigation }: any) => {
+const SettingsScreen = ({ navigation }: any) => {
     return (
         <View>
             <FlatList

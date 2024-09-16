@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS shops (
 )
 ''')
 
-# Create 'event' table
+# Create 'events' table
 db.execute('''
 CREATE TABLE IF NOT EXISTS events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
