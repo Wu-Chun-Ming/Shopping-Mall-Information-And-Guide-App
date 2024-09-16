@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Alert, StyleSheet } from 'react-native';
 import { AppInput, NavigationButton } from '../UI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteUser, updateUserPassword } from '../database/db-service';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ProfileScreen = ({ navigation }: any) => {
   const [user, setUser] = useState('');
@@ -47,35 +48,37 @@ const ProfileScreen = ({ navigation }: any) => {
     Alert.alert('Your account has been deleted');
   }
 
-  useEffect(() => {
+  useFocusEffect(() => {
     autoLogin();
-  }, []);
+  });
 
   // If the user is not logged in, show a message and a button to go to the login page
-  (!user)
-    ? (<View style={styles.containter}>
-      <View style={{ alignItems: 'center', }}>
-        <Text style={{ fontSize: 30 }}>You are not logged in!</Text>
-      </View>
-      <NavigationButton title='Go to Login' onPress={() => navigation.navigate('Login')} />
-    </View>)
-    : (<View style={styles.containter}>
-      <View style={{ alignItems: 'center' }}>
-        <Text style={{ fontSize: 30, }}>Welcome, {user}!</Text>
-      </View>
+  return (
+    (!user)
+      ? (<View style={styles.containter}>
+        <View style={{ alignItems: 'center', }}>
+          <Text style={{ fontSize: 30 }}>You are not logged in!</Text>
+        </View>
+        <NavigationButton title='Go to Login' onPress={() => navigation.navigate('Login')} />
+      </View>)
+      : (<View style={styles.containter}>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ fontSize: 30, }}>Welcome, {user}!</Text>
+        </View>
 
-      <AppInput
-        label='New Password'
-        placeholder='New Password'
-        orientation='horizontal'
-        value={newPassword}
-        onChangeText={(input: string) => setNewPassword(input)}
-        secureTextEntry
-      />
-      <NavigationButton title="Update Password" onPress={_updatePassword} style={{ marginBottom: 10, }} />
-      <NavigationButton title="Logout" onPress={_logout} style={{ marginBottom: 10, }} />
-      <NavigationButton title="Delete Account" onPress={_deleteAccount} style={{ backgroundColor: '#b01515' }} />
-    </View>)
+        <AppInput
+          label='New Password'
+          placeholder='New Password'
+          orientation='horizontal'
+          value={newPassword}
+          onChangeText={(input: string) => setNewPassword(input)}
+          secureTextEntry
+        />
+        <NavigationButton title="Update Password" onPress={_updatePassword} style={{ marginBottom: 10, }} />
+        <NavigationButton title="Logout" onPress={_logout} style={{ marginBottom: 10, }} />
+        <NavigationButton title="Delete Account" onPress={_deleteAccount} style={{ backgroundColor: '#b01515' }} />
+      </View>)
+  );
 }
 
 const styles = StyleSheet.create({

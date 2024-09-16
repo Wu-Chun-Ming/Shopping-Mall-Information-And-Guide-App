@@ -18,43 +18,45 @@ const ShopDetailScreen = ({ route }: any) => {
   useEffect(() => {
     loadShopDetail();
   }, []);
-  
+
   // If shop detail is not loaded
-  (!shop) 
-  ? (<View style={{ flex: 1, justifyContent: 'center' }}>
+  return (
+    (!shop)
+      ? (<View style={{ flex: 1, justifyContent: 'center' }}>
         <ActivityIndicator size={80} color="#0000ff" />
       </View>)
-  : (<ScrollView style={{ flex: 1, padding: 10 }}>
-      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>
-        <Text>{shop.name.toUpperCase()}</Text>
-      </Text>
-      <Text>
-        <Text style={styles.label}>Location: </Text>
-        {shop.location}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Type: </Text>
-        {shop.type}
-      </Text>
-      <Text>
-        <Text style={styles.label}>Contact Number: </Text>
-        {shop.contact}
-      </Text>
-      <Text style={{ textAlign: 'justify' }}>
-        <Text style={styles.label}>Description: </Text>
-        {shop.description}
-      </Text>
-      <View>
-        <Image
-          source={getShopImageSource(shop.type, shop.name)}
-          style={{
-            width: width,
-            height: height * 0.4,
-            resizeMode: 'contain',
-          }}
-        />
-      </View>
-    </ScrollView>)
+      : (<ScrollView style={{ flex: 1, padding: 10 }}>
+        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>
+          <Text>{shop.name.toUpperCase()}</Text>
+        </Text>
+        <Text>
+          <Text style={styles.label}>Location: </Text>
+          {shop.location}
+        </Text>
+        <Text>
+          <Text style={styles.label}>Type: </Text>
+          {shop.type}
+        </Text>
+        <Text>
+          <Text style={styles.label}>Contact Number: </Text>
+          {shop.contact}
+        </Text>
+        <Text style={{ textAlign: 'justify' }}>
+          <Text style={styles.label}>Description: </Text>
+          {shop.description}
+        </Text>
+        <View>
+          <Image
+            source={getShopImageSource(shop.type, shop.name)}
+            style={{
+              width: width,
+              height: height * 0.4,
+              resizeMode: 'contain',
+            }}
+          />
+        </View>
+      </ScrollView>)
+  );
 }
 
 const styles = StyleSheet.create({
