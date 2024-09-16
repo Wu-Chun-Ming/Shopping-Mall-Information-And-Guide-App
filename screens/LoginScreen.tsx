@@ -1,94 +1,93 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
-import { AuthContext } from '../App';
-import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Alert } from 'react-native';
+import { AppInput, NavigationButton } from '../UI';
+import { getUserDetail } from '../database/db-service';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface LoginScreenProps {
-  navigation: StackNavigationProp<any, any>;
-}
 
-export default function LoginScreen({ navigation }: LoginScreenProps) {
-  const authContext = useContext(AuthContext);
+const LoginScreen = ({ navigation }: any) => {
 
-  if (!authContext) {
-    throw new Error('AuthContext must be used within an AuthProvider');
-  }
-  
-  const { setUser } = authContext;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const login = () => {
-    if (!username || !password) {
-      Alert.alert('Validation Error', 'Username and password are required.');
-      return;
+  const validateForm = (username: String, password: String) => {
+
+    let validationErrors = {};
+
+    // Validate username field
+    if (!username) {
+      validationErrors.username = 'Username is required.';
+    } else if (username.trim().length === 0) {
+      validationErrors.username = 'Username cannot be empty.';
     }
 
-    setIsLoading(true);
+    // Validate password field
+    if (!password) {
+      validationErrors.password = 'Password is required.';
+    } else if (password.trim().length === 0) {
+      validationErrors.password = 'Password cannot be empty.';
+    }
 
-    const ws = new WebSocket('ws://your-websocket-server.com/login');
+    setErrors(validationErrors);
+    return (Object.keys(validationErrors).length === 0);
+  }
 
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ action: 'login', username, password }));
-    };
-
-    ws.onmessage = (event) => {
-      const response = JSON.parse(event.data);
-      if (response.success) {
-        setUser(response.user);
-        navigation.navigate('ShopScreen');
+  const _login = async () => {
+    const validationErrors = validateForm(username, password);
+    if (validationErrors) {
+      const user = await getUserDetail(username);
+      if (user) {
+        try {
+          await AsyncStorage.setItem('username', user.username);
+          Alert.alert('You are now logged in.');
+          navigation.navigate('Profile');
+        } catch (error) {
+          console.log('## ERROR SAVING ITEM ##: ', error);
+        }
       } else {
-        Alert.alert('Login Failed', 'Invalid username or password');
+        Alert.alert('Username has not been registered.');
       }
-      setIsLoading(false);
-    };
-
-    ws.onerror = (e) => {
-      console.error('WebSocket Error:', e.message);
-      Alert.alert('Connection Error', 'Could not connect to the server.');
-      setIsLoading(false);
-    };
+    } else {
+      Alert.alert(
+        'Errors',
+        `${errors.username ? errors.username + '\n' : ''}` +
+        `${errors.password ? errors.password + '\n' : ''}`
+      );
+    }
   };
 
+  useEffect(() => {
+    validateForm(username, password);
+  }, [username, password]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setUsername('');
+      setPassword('');
+    }, [navigation])
+  )
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
+    <View style={{ padding: 10, }}>
+      <AppInput
         placeholder="Username"
         value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
-        style={styles.input}
+        onChangeText={(input: string) => setUsername(input)}
       />
-      <TextInput
+
+      <AppInput
         placeholder="Password"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(input: string) => setPassword(input)}
         secureTextEntry
-        style={styles.input}
       />
-      <Button title={isLoading ? 'Logging In...' : 'Login'} onPress={login} disabled={isLoading} />
-      <Button title="Go to Register" onPress={() => navigation.navigate('Register')} />
+
+      <NavigationButton title="Login" onPress={_login} style={{ marginBottom: 10, }} />
+      <NavigationButton title='Go to Register' onPress={() => navigation.navigate('Register')} style={{ backgroundColor: '#0c2552', }} />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 8,
-    marginBottom: 16,
-  },
-});
+export default LoginScreen;

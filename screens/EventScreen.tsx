@@ -1,53 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { connectWebSocket, fetchEvents } from '../server/eventService';
+import { View, Text, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { fetchEvents, getDBConnection } from '../database/db-service';
+import { getEventImageSource } from '../images';
 
-// Define the event structure
-interface Event {
-  id: number;
-  name: string;
-  date: string;
-}
+const EventScreen = ({ route, navigation }: any) => {
 
-// Define the navigation type
-type RootStackParamList = {
-  EventDetail: { eventId: number };
-};
+  const [events, setEvents] = useState([]);
 
-type EventScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'EventDetail'
->;
-
-export default function EventScreen() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const navigation = useNavigation<EventScreenNavigationProp>();
-
-  useEffect(() => {
-    connectWebSocket(); // Connect to the WebSocket when the component mounts
-    loadEvents();
-  }, []);
-
-  const loadEvents = () => {
-    fetchEvents((fetchedEvents: Event[]) => {
-      setEvents(fetchedEvents);
-    });
+  const loadEvents = async () => {
+    const eventList = await fetchEvents(await getDBConnection());
+    setEvents(eventList);
   };
 
+  useEffect(() => {
+    loadEvents();
+  }, [])
+
   return (
-    <View>
+    <View style={{
+      flex: 1,
+      padding: 20,
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
+
+      {/* Event List */}
       <FlatList
         data={events}
         keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigation.navigate('EventDetail', { eventId: item.id })}>
-            <Text>{item.name}</Text>
-            <Text>{item.date}</Text>
-          </TouchableOpacity>
+          <View>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', }}>{item.name.toUpperCase()}</Text>
+            {/* Location */}
+            <Text>
+              <Text style={{ fontWeight: 'bold' }}>Location: </Text>
+              {item.location}
+            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('Event Detail', { eventId: item.id })
+              }>
+              <Image source={getEventImageSource(item.id)}
+                style={{
+                  width: Dimensions.get('window').width,
+                  height: 300,
+                  resizeMode: 'contain',
+                }}
+              />
+            </TouchableOpacity>
+          </View>
         )}
       />
     </View>
   );
-}
+};
+
+export default EventScreen;

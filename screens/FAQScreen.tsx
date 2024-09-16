@@ -1,62 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { fetchFAQ, getDBConnection } from '../database/db-service';
 
-interface QnAItem {
-  id: number;
-  question: string;
-  answer: string;
-}
+const FAQScreen = () => {
+  const [faqData, setFaqData] = useState([]);
 
-export default function QnAScreen() {
-  const [qnaData, setQnaData] = useState<QnAItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Load frequently asked questions from database
+  const loadFAQ = async () => {
+    const faqData = await fetchFAQ(await getDBConnection());
+    setFaqData(faqData);
+  };
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8000'); // Connect to WebSocket server
-
-    ws.onopen = () => {
-      console.log('Connected to the Q&A WebSocket server');
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        setQnaData(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
-      }
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error: ', error);
-    };
-
-    ws.onclose = () => {
-      console.log('Disconnected from the Q&A WebSocket server');
-    };
-
-    return () => {
-      ws.close();
-    };
+    loadFAQ();
   }, []);
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
-
   return (
-    <View style={{ flex: 1, padding: 10 }}>
-      <FlatList
-        data={qnaData}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={{ marginBottom: 10 }}>
-            <Text style={{ fontWeight: 'bold' }}>{item.question}</Text>
-            <Text>{item.answer}</Text>
-          </View>
-        )}
-      />
+    <View style={{ flex: 1, padding: 15 }}>
+      {(faqData.length === 0)
+        ? <View style={{ flex: 1, justifyContent: 'center' }}>
+          <ActivityIndicator size={80} color="#0000ff" />
+        </View>
+        : <FlatList
+          data={faqData}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={{ marginBottom: 10 }}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'justify' }}>Q: {item.question}</Text>
+              <Text style={{fontSize: 15, textAlign: 'justify'}}>A: {item.answer}</Text>
+            </View>
+          )}
+        />}
     </View>
   );
 }
+
+export default FAQScreen;

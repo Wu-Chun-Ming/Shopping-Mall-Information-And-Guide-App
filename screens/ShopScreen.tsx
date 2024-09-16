@@ -1,44 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
-import { fetchShops } from '../server/db';  // Import the fetchShops function from db.js
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { fetchShops, getDBConnection } from '../database/db-service';
+import { getShopImageSource } from '../images';
+import { FlatGrid } from 'react-native-super-grid';
 
-interface Shop {
-  id: String;
-  name: String;
-  floor: String;
-  type: String;
-  picture: String;
-}
+const ShopScreen = ({ route, navigation }: any) => {
+  const [shops, setShops] = useState([]);
 
-export default function ShopScreen() {
-  const [shops, setShops] = useState<Shop[]>([]);
+  // Load the shops from database
+  const loadShops = async () => {
+    const shopList = await fetchShops(await getDBConnection());
+    setShops(shopList);
+  };
 
   useEffect(() => {
     loadShops();
   }, []);
 
-  const loadShops = async () => {
-    const shopList = await fetchShops();
-    setShops(shopList);
-  };
-
   return (
     <View>
-      <FlatList
+      {/* Shop List */}
+      <FlatGrid
         data={shops}
-        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View>
-            <Text>{item.name}</Text>
-            <Text>Floor: {item.floor}</Text>
-            <Text>Type: {item.type}</Text>
-            <Image
-              source={{ uri: `data:image/jpeg;base64,${item.picture}` }}
-              style={{ width: 100, height: 100 }}
-            />
+          <View style={[styles.itemContainer]}>
+            <Text style={styles.itemName}>{item.name.toUpperCase()}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Shop Detail', { shopId: item.id });
+              }}
+              style={{ width: '100%', }}
+            >
+              <Image
+                source={getShopImageSource(item.type, item.name)}
+                style={{
+                  borderRadius: 10,
+                  width: '100%',
+                  height: '100%',
+                }} />
+            </TouchableOpacity>
           </View>
-        )}
-      />
+        )} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  itemContainer: {
+    margin: 5,
+    justifyContent: 'flex-end',
+    padding: 10,
+    height: 150,
+    alignItems: 'center',
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
+
+export default ShopScreen;

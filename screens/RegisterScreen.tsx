@@ -1,70 +1,111 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Alert } from 'react-native';
+import { AppInput, NavigationButton } from '../UI';
+import { createUser } from '../database/db-service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
-type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-};
+const RegisterScreen = ({ navigation }: any) => {
 
-type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
-
-interface Props {
-  navigation: RegisterScreenNavigationProp;
-}
-
-export default function RegisterScreen({ navigation }: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmedPassword, setConfirmedPassword] = useState('');
+  const [errors, setErrors] = useState({});
 
-  const register = () => {
-    if (username.trim() === '' || password.trim() === '') {
-      Alert.alert('Error', 'Username and password cannot be empty.');
-      return;
+  const validateForm = (username: String, password: String, confirmedPassword: String) => {
+
+    let validationErrors = {};
+
+    // Validate username field
+    if (!username) {
+      validationErrors.username = 'Username is required.';
+    } else if (username.trim().length === 0) {
+      validationErrors.username = 'Username cannot be empty.';
     }
 
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long.');
-      return;
+    // Validate password field
+    if (!password) {
+      validationErrors.password = 'Password is required.';
+    } else if (password.trim().length === 0) {
+      validationErrors.password = 'Password cannot be empty.';
     }
 
-    const ws = new WebSocket('ws://your-websocket-server.com/register');
+    // Validate confirmed password field
+    if (!confirmedPassword) {
+      validationErrors.confirmedPassword = 'Confirmed Password is required.';
+    } else if (confirmedPassword.trim().length === 0) {
+      validationErrors.confirmedPassword = ' Confirmed Password cannot be empty.';
+    }
 
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ action: 'register', username, password }));
-    };
+    // Check if password and confirmed password is the same
+    if (password && confirmedPassword && password !== confirmedPassword) {
+      validationErrors.differentPasswords = 'Password and Confirmed Password must be the same.';
+    }
 
-    ws.onmessage = (event) => {
-      const response = JSON.parse(event.data);
-      if (response.success) {
-        Alert.alert('Success', 'Registration successful! Please log in.');
-        navigation.navigate('Login');
-      } else {
-        Alert.alert('Error', 'Registration failed. Please try again.');
+    setErrors(validationErrors);
+    return (Object.keys(validationErrors).length === 0);
+  }
+
+  const _register = async () => {
+    const validationErrors = validateForm(username, password, confirmedPassword);
+    if (validationErrors) {
+      await createUser(username, password);
+      try {
+        await AsyncStorage.setItem('username', username);
+        Alert.alert('You are now logged in.');
+        navigation.navigate('Profile');
+      } catch (error) {
+        console.log('## ERROR SAVING ITEM ##: ', error);
       }
-    };
-
-    ws.onerror = (e) => {
-      console.error('WebSocket Error:', e.message);
-      Alert.alert('Error', 'Unable to register. Please try again later.');
-    };
+    } else {
+      Alert.alert(
+        'Errors',
+        `${errors.username ? errors.username + '\n' : ''}` +
+        `${errors.password ? errors.password + '\n' : ''}` +
+        `${errors.confirmedPassword ? errors.confirmedPassword + '\n' : ''}` +
+        `${errors.differentPasswords ? errors.differentPasswords + '\n' : ''}`
+      );
+    }
   };
 
+  useEffect(() => {
+    validateForm(username, password, confirmedPassword);
+  }, [username, password, confirmedPassword]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setUsername('');
+      setPassword('');
+      setConfirmedPassword('');
+    }, [navigation])
+  )
+
   return (
-    <View>
-      <Text>Register</Text>
-      <TextInput
+    <View style={{ padding: 10, }}>
+      <AppInput
         placeholder="Username"
         value={username}
-        onChangeText={setUsername}
+        onChangeText={(input: string) => setUsername(input)}
       />
-      <TextInput
+
+      <AppInput
         placeholder="Password"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(input: string) => setPassword(input)}
         secureTextEntry
       />
-      <Button title="Register" onPress={register} />
+
+      <AppInput
+        placeholder="Confirm Password"
+        value={confirmedPassword}
+        onChangeText={(input: string) => setConfirmedPassword(input)}
+        secureTextEntry
+      />
+
+      <NavigationButton title='Register' onPress={_register} style={{ marginBottom: 10, }} />
+      <NavigationButton title='Go to Login' onPress={() => navigation.navigate('Login')} style={{ backgroundColor: '#0c2552', }} />
     </View>
   );
 }
+
+export default RegisterScreen;
