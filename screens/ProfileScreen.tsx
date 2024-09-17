@@ -3,7 +3,6 @@ import { View, Text, Alert } from 'react-native';
 import { AppInput, NavigationButton } from '../UI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteUser, updateUserPassword } from '../database/db-service';
-import { useFocusEffect } from '@react-navigation/native';
 
 const ProfileScreen = ({ route, navigation }: any) => {
   const [user, setUser] = useState('');
@@ -14,7 +13,7 @@ const ProfileScreen = ({ route, navigation }: any) => {
     try {
       let username = await AsyncStorage.getItem('username');
       if (username !== null) {
-        setUser(username);
+        console.log('setting username');
       }
     } catch (error) {
       console.log('## ERROR READING ITEM ##: ', error);
@@ -48,9 +47,9 @@ const ProfileScreen = ({ route, navigation }: any) => {
     Alert.alert('Your account has been deleted');
   }
 
-  useFocusEffect(() => {
+  useEffect(() => {
     autoLogin();
-  })
+  }, [])
 
   // If the user is not logged in, show a message and a button to go to the login page
   if (!user) {
